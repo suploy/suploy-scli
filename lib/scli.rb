@@ -13,12 +13,26 @@ class Scli
   end
 
   def initialize(argv, io)
-    @options = BIN_SPEC.parse(argv)
-    puts @options
-    @stdout = io
-  end
+    begin
+      @options = BIN_SPEC.parse(argv)
+    rescue Oyster::HelpRendered; exit
+    end
 
-  def add_ssh_key(user, keyname, keydir, key)
-    File.open("#{keydir}/#{user}@#{keyname}.pub", 'w') { |file| file.write(key) }
+      @stdout = io
+      @keydir = "./"
+      interpret
+    end
+
+    def interpret
+      if @options[:addssh]
+        user = @options[:addssh][:user]
+        keyname = @options[:addssh][:keyname]
+        key = @options[:addssh][:key]
+        add_ssh_key(user, keyname, @keydir, key)
+      end
+    end
+
+    def add_ssh_key(user, keyname, keydir, key)
+      File.open("#{keydir}/#{user}@#{keyname}.pub", 'w') { |file| file.write(key + "\n") }
+    end
   end
-end
