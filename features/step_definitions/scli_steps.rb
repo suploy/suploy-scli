@@ -18,3 +18,15 @@ end
 Then(/^the key should not be in "(.*?)"\/(.*?)\.pub$/) do |keydir, filename|
   File.exist?("#{keydir}/#{filename}.pub").should == false
 end
+
+Given(/^I run the script with add\-repo \-\-user (.*?) \-\-repo (.*?)$/) do |user,repo|
+  command = "addrepo --user #{user} --repo #{repo}"
+  @io = StringIO.new
+  @app = Scli.new(command.split(/\s+/), @io)
+end
+
+Then(/^the gitolite conf should contain (.*?) and (.*?)/) do |user, repo|
+	conf = File.read("../gitolite/gitolite-admin/conf/gitolite.conf")
+	(conf =~ /#{user}/).should == true
+	(conf =~ /#{repo}/).should == true
+end

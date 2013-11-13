@@ -56,10 +56,10 @@ class Scli
 
 	def push_git_repo
 		# maybe use grit here?
-		Dir.chdir(@git_repo_url) do
-			system('git add --all')
-			system('git commit -m "auto commit"')
-			system('git push origin master')
-		end
+		# Dir.chdir(@git_repo_url) do
+		# 	system('git add --all')
+		# 	system('git commit -m "auto commit"')
+		# 	system('git push origin master')
+		# end
 	end
 end
