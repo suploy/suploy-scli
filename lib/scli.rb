@@ -15,9 +15,14 @@ class Scli
       string :user, :desc => 'user the key corresponds to'
       string :keyname, :desc => 'name to identify the key'
     end
+		subcommand :addrepo do
+			name 'scli addrepo'
+			string :user, :desc => 'user who has repo access'
+			string :repo, :desc => 'name of the repository'
+		end
   end
 
-	attr_accessor :keydir, :git_repo_url
+	attr_accessor :keydir, :git_repo_url, :conffile
 
   def initialize(argv, io)
     begin
@@ -27,6 +32,7 @@ class Scli
 
     @stdout = io
     @keydir = "./"
+		@conffile = "./gitolite.conf"
 		@git_repo_url = "./"
     interpret
   end
@@ -41,6 +47,10 @@ class Scli
 			user = @options[:rmssh][:user]
 			keyname = @options[:rmssh][:keyname]
 			remove_ssh_key(user, keyname)
+		elsif @options[:addrepo]
+			user = @options[:addrepo][:user]
+			repo = @options[:addrepo][:repo]
+			add_repository(user, repo)
     end
   end
 
@@ -52,6 +62,13 @@ class Scli
 	def remove_ssh_key(user, keyname)
 		File.delete("#{@keydir}/#{user}@#{keyname}.pub")
 		push_git_repo
+	end
+
+	def add_repository(user, repo)
+		File.open("#{conffile}", 'a') do |file|
+			file.write("\nrepo #{repo}")
+			file.write("\n    RW+\t=  #{user}\n")
+		end
 	end
 
 	def push_git_repo

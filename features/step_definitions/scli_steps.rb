@@ -25,8 +25,8 @@ Given(/^I run the script with add\-repo \-\-user (.*?) \-\-repo (.*?)$/) do |use
   @app = Scli.new(command.split(/\s+/), @io)
 end
 
-Then(/^the gitolite conf should contain (.*?) and (.*?)/) do |user, repo|
-	conf = File.read("../gitolite/gitolite-admin/conf/gitolite.conf")
-	(conf =~ /#{user}/).should == true
-	(conf =~ /#{repo}/).should == true
+Then(/^the \.\/gitolite.conf should contain (.*?) and (.*?)/) do |user,repo|
+	conf = File.read("./gitolite.conf")
+	(conf =~ /#{user}/m).should be_true
+	(conf =~ /#{repo}/m).should be_true
 end
