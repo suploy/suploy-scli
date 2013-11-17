@@ -7,8 +7,11 @@ Feature: Add a new repository
 
   Examples:
     | user    | repo		 |
+    | flopska | mega		 |
     | flopska | project1 |
     | flopska | project2 |
     | user1		| project3 |
+    | user1		| foobar	 |
+    | user1		| dopeshit |
     
 

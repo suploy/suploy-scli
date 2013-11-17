@@ -1,3 +1,5 @@
+require 'fileutils'
+require 'tempfile'
 require 'oyster'
 
 class Scli
@@ -18,6 +20,10 @@ class Scli
 		subcommand :addrepo do
 			name 'scli addrepo'
 			string :user, :desc => 'user who has repo access'
+			string :repo, :desc => 'name of the repository'
+		end
+		subcommand :rmrepo do
+			name 'scli rmrepo'
 			string :repo, :desc => 'name of the repository'
 		end
   end
@@ -51,6 +57,9 @@ class Scli
 			user = @options[:addrepo][:user]
 			repo = @options[:addrepo][:repo]
 			add_repository(user, repo)
+		elsif @options[:rmrepo]
+			repo = @options[:rmrepo][:repo]
+			remove_repository(repo)
     end
   end
 
@@ -65,18 +74,42 @@ class Scli
 	end
 
 	def add_repository(user, repo)
-		File.open("#{conffile}", 'a') do |file|
+		File.open("#@conffile", 'a') do |file|
 			file.write("\nrepo #{repo}")
 			file.write("\n    RW+\t=  #{user}\n")
 		end
 	end
 
+	def remove_repository(repo) 
+		tmp = Tempfile.new("extract")
+
+		# we have to keep deleting lines until there is an empty newline
+		line_deleted = false
+
+		open("#@conffile", 'r').each do |l|
+			if l =~	/^\s*$/ && line_deleted
+				line_deleted = false 
+				next # don't write the empty newline
+			end
+			next if line_deleted
+
+			unless l =~ /^repo\s#{repo}$/
+				tmp << l 
+			else
+				line_deleted = true
+			end
+		end
+
+		tmp.close
+		FileUtils.mv(tmp.path, "#@conffile")
+	end
+
 	def push_git_repo
 		# maybe use grit here?
-		# Dir.chdir(@git_repo_url) do
-		# 	system('git add --all')
-		# 	system('git commit -m "auto commit"')
-		# 	system('git push origin master')
-		# end
+		Dir.chdir(@git_repo_url) do
+			system('git add --all')
+			system('git commit -m "auto commit"')
+			system('git push origin master')
+		end
 	end
 end

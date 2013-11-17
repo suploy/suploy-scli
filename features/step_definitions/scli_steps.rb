@@ -30,3 +30,15 @@ Then(/^the \.\/gitolite.conf should contain (.*?) and (.*?)/) do |user,repo|
 	(conf =~ /#{user}/m).should be_true
 	(conf =~ /#{repo}/m).should be_true
 end
+
+Given(/^I run the script with rm\-repo \-\-repo (.*?)$/) do |repo|
+  command = "rmrepo --repo #{repo}"
+  @io = StringIO.new
+  @app = Scli.new(command.split(/\s+/), @io)
+end
+
+Then(/^the \.\/gitolite\.conf should not contain (.*?)$/) do |repo|
+	conf = File.read("./gitolite.conf")
+	(conf =~ /#{repo}/m).should be_false
+end
+
