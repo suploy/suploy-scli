@@ -78,6 +78,7 @@ class Scli
 			file.write("\nrepo #{repo}")
 			file.write("\n    RW+\t=  #{user}\n")
 		end
+    push_git_repo
 	end
 
 	def remove_repository(repo) 
@@ -102,6 +103,7 @@ class Scli
 
 		tmp.close
 		FileUtils.mv(tmp.path, "#@conffile")
+    push_git_repo
 	end
 
 	def push_git_repo
