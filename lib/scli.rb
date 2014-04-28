@@ -3,20 +3,20 @@ require 'tempfile'
 require 'oyster'
 
 class Scli
-  BIN_SPEC = Oyster.spec do
-    name 'scli -- suploy server command line interface'
+	BIN_SPEC = Oyster.spec do
+		name 'scli -- suploy server command line interface'
 
-    subcommand :addssh do
-      name 'scli add'
-      string :user, :desc => 'user the key corresponds to'
-      string :keyname, :desc => 'name to identify the key'
-      string :key, :desc => 'the ssh-key'
-    end
-    subcommand :rmssh do
-      name 'scli rm'
-      string :user, :desc => 'user the key corresponds to'
-      string :keyname, :desc => 'name to identify the key'
-    end
+		subcommand :addssh do
+			name 'scli add'
+			string :user, :desc => 'user the key corresponds to'
+			string :keyname, :desc => 'name to identify the key'
+			string :key, :desc => 'the ssh-key'
+		end
+		subcommand :rmssh do
+			name 'scli rm'
+			string :user, :desc => 'user the key corresponds to'
+			string :keyname, :desc => 'name to identify the key'
+		end
 		subcommand :addrepo do
 			name 'scli addrepo'
 			string :user, :desc => 'user who has repo access'
@@ -26,29 +26,29 @@ class Scli
 			name 'scli rmrepo'
 			string :repo, :desc => 'name of the repository'
 		end
-  end
+	end
 
 	attr_accessor :keydir, :git_repo_url, :conffile
 
-  def initialize(argv, io)
-    begin
-      @options = BIN_SPEC.parse(argv)
-    rescue Oyster::HelpRendered; exit
-    end
+	def initialize(argv, io)
+		begin
+			@options = BIN_SPEC.parse(argv)
+		rescue Oyster::HelpRendered; exit
+		end
 
-    @stdout = io
-    @keydir = "./"
+		@stdout = io
+		@keydir = "./"
 		@conffile = "./gitolite.conf"
 		@git_repo_url = "./"
-    interpret
-  end
+		interpret
+	end
 
-  def interpret
-    if @options[:addssh]
-      user = @options[:addssh][:user]
-      keyname = @options[:addssh][:keyname]
-      key = @options[:addssh][:key]
-      add_ssh_key(user, keyname, key)
+	def interpret
+		if @options[:addssh]
+			user = @options[:addssh][:user]
+			keyname = @options[:addssh][:keyname]
+			key = @options[:addssh][:key]
+			add_ssh_key(user, keyname, key)
 		elsif @options[:rmssh]
 			user = @options[:rmssh][:user]
 			keyname = @options[:rmssh][:keyname]
@@ -60,13 +60,13 @@ class Scli
 		elsif @options[:rmrepo]
 			repo = @options[:rmrepo][:repo]
 			remove_repository(repo)
-    end
-  end
+		end
+	end
 
-  def add_ssh_key(user, keyname, key)
-    File.open("#{keydir}/#{user}@#{keyname}.pub", 'w') { |file| file.write(key + "\n") }
+	def add_ssh_key(user, keyname, key)
+		File.open("#{keydir}/#{user}@#{keyname}.pub", 'w') { |file| file.write(key + "\n") }
 		push_git_repo
-  end
+	end
 
 	def remove_ssh_key(user, keyname)
 		File.delete("#{@keydir}/#{user}@#{keyname}.pub")
@@ -106,6 +106,7 @@ class Scli
 
 	def push_git_repo
 		# maybe use grit here?
+		return
 		Dir.chdir(@git_repo_url) do
 			system('git add --all')
 			system('git commit -m "auto commit"')
