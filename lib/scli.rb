@@ -33,6 +33,14 @@ class Scli
 			name 'scli viewrepo'
 			string :repo, :desc => 'name of the repository'
 		end
+		subcommand :startcontainer do
+			name 'scli start'
+			string :repo, :desc => 'name of the repository'
+		end
+		subcommand :stopcontainer do
+			name 'scli stop'
+			string :repo, :desc => 'name of the repository'
+		end
 	end
 
 	attr_accessor :keydir, :git_repo_url, :conffile
@@ -72,6 +80,12 @@ class Scli
 		elsif @options[:viewrepo]
 			repo = @options[:viewrepo][:repo]
 			view_repository(repo)
+		elsif @options[:startcontainer]
+			repo = @options[:startcontainer][:repo]
+      start_container(repo)
+		elsif @options[:stopcontainer]
+			repo = @options[:stopcontainer][:repo]
+      stop_container(repo)
 		end
 	end
 
@@ -133,4 +147,13 @@ class Scli
     container.json
 	end
 
+  def start_container(repo)
+    container = Docker::Container.get(repo)
+    container.start
+  end
+
+  def stop_container(repo)
+    container = Docker::Container.get(repo)
+    container.stop
+  end
 end
