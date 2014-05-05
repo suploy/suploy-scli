@@ -1,0 +1,5 @@
+= suploy-scli
+
+Generate this with
+    suploy-scli rdoc
+After you have described your command line interface
