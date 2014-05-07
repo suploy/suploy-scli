@@ -2,6 +2,9 @@ PATH
   remote: .
   specs:
     suploy-scli (0.0.1)
+      docker
+      docker-api
+      gitolite
       gli (= 2.10.0)
 
 GEM
@@ -45,7 +48,6 @@ GEM
       blankslate
     json (1.8.1)
     mime-types (1.25.1)
-    multi_json (1.9.3)
     multi_test (0.1.1)
     posix-spawn (0.3.8)
     rake (10.3.1)
@@ -59,8 +61,6 @@ PLATFORMS
 
 DEPENDENCIES
   aruba
-  docker-api
-  gitolite
   rake
   rdoc
   suploy-scli!
