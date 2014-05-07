@@ -1,13 +1,13 @@
 #!/usr/bin/env ruby
 require 'gli'
-begin # XXX: Remove this begin/rescue before distributing your app
 require 'suploy-scli'
-#rescue LoadError
-#  STDERR.puts "In development, you need to use `bundle exec bin/suploy-scli` to run your app"
-#  STDERR.puts "At install-time, RubyGems will make sure lib, etc. are in the load path"
-#  STDERR.puts "Feel free to remove this message from bin/suploy-scli now"
-#  exit 64
-#end
+
+rescue LoadError
+  STDERR.puts "In development, you need to use `bundle exec bin/suploy-scli` to run your app"
+  STDERR.puts "At install-time, RubyGems will make sure lib, etc. are in the load path"
+  STDERR.puts "Feel free to remove this message from bin/suploy-scli now"
+  exit 64
+end
 
 include GLI::App
 
@@ -111,6 +111,20 @@ command :container do |c|
       if args.size == 1
          @scli.view_container(args[0])
       end
+
+desc 'Handle docker database containers'
+command :database do |c|
+  c.desc 'create a new database container'
+  c.command :create do |create|
+    create.action do |global_options,options,args|
+      puts "Creating a database just for you. Hang on a second..."
+      puts Scli.database_create
+    end
+  end
+  c.desc 'show all database containers'
+  c.command :list do |list|
+    list.action do |global_options,options,args|
+      puts "list all containers here"
     end
   end
 end
