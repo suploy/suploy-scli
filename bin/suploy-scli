@@ -2,16 +2,16 @@
 require 'gli'
 begin # XXX: Remove this begin/rescue before distributing your app
 require 'suploy-scli'
-rescue LoadError
-  STDERR.puts "In development, you need to use `bundle exec bin/suploy-scli` to run your app"
-  STDERR.puts "At install-time, RubyGems will make sure lib, etc. are in the load path"
-  STDERR.puts "Feel free to remove this message from bin/suploy-scli now"
-  exit 64
-end
+#rescue LoadError
+#  STDERR.puts "In development, you need to use `bundle exec bin/suploy-scli` to run your app"
+#  STDERR.puts "At install-time, RubyGems will make sure lib, etc. are in the load path"
+#  STDERR.puts "Feel free to remove this message from bin/suploy-scli now"
+#  exit 64
+#end
 
 include GLI::App
 
-program_desc 'Describe your application here'
+program_desc 'A commandlineinterface for managing a suploy server'
 
 version SuployScli::VERSION
 
@@ -23,43 +23,100 @@ default_value 'the default'
 arg_name 'The name of the argument'
 flag [:f,:flagname]
 
-desc 'Describe list here'
+desc 'manage ssh-keys'
 arg_name 'Describe arguments to list here'
-command :list do |c|
+command :ssh do |c|
   c.desc 'Describe a switch to list'
   c.switch :s
 
   c.desc 'Describe a flag to list'
   c.default_value 'default'
   c.flag :f
-  c.action do |global_options,options,args|
 
-    # Your command logic here
-     
-    # If you have any errors, just raise them
-    # raise "that command made no sense"
 
-    puts "list command ran"
+  c.desc "adds a ssh-key to a user"
+  arg_name 'Describe arguments to list here'
+  c.command :add do |add| 
+    add.action do |global_options,options,args|
+      if args.size == 3
+         @scli.add_ssh_key(args[0], args[1], args[3])
+      end
+    end
   end
+
+
+  c.desc "removes a ssh-key from a user"
+  c.command :rm do |rm| 
+    rm.action do |global_options,options,args|
+      if args.size == 2
+         @scli.remove_ssh_key(args[0], args[1])
+      end
+    end
+  end
+
+
 end
 
-desc 'Describe add here'
+desc 'manage repositoryis'
 arg_name 'Describe arguments to add here'
-command :add do |c|
-  c.action do |global_options,options,args|
-    puts "add command ran"
+command :repo do |c|
+
+
+  c.desc "adds a repository to suploy"
+  c.command :add do |add| 
+    add.action do |global_options,options,args|
+      if args.size == 2
+         @scli.add_repository(args[0], args[1])
+      end
+    end
   end
+
+  c.desc "removes a repository from suploy"
+  c.command :rm do |rm| 
+    rm.action do |global_options,options,args|
+      if args.size == 2
+         @scli.remove_repository(args[0])
+      end
+    end
+  end
+
 end
 
-desc 'Describe complete here'
+desc 'manage suploy container'
 arg_name 'Describe arguments to complete here'
-command :complete do |c|
-  c.action do |global_options,options,args|
-    puts "complete command ran"
+command :container do |c|
+
+  c.desc ""
+  c.command :start do |start| 
+    start.action do |global_options,options,args|
+      if args.size == 1
+         @scli.start_container(args[0])
+      end
+    end
+  end
+  
+
+  c.desc "stop a running container"
+  c.command :stop do |stop| 
+    stop.action do |global_options,options,args|
+      if args.size == 1
+         @scli.stop_container(args[0])
+      end
+    end
+  end
+
+  c.desc "Views information about a container"
+  c.command :view do |view| 
+    view.action do |global_options,options,args|
+      if args.size == 1
+         @scli.view_container(args[0])
+      end
+    end
   end
 end
 
 pre do |global,command,options,args|
+  @scli = Scli.new
   # Pre logic here
   # Return true to proceed; false to abort and not call the
   # chosen command
@@ -81,3 +138,4 @@ on_error do |exception|
 end
 
 exit run(ARGV)
+end
