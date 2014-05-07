@@ -1,0 +1,6 @@
+= suploy-scli
+
+Describe your project here
+
+:include:suploy-scli.rdoc
+

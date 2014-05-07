@@ -1,61 +1,30 @@
 #!/usr/bin/env ruby
 require 'gli'
-begin # XXX: Remove this begin/rescue before distributing your app
 require 'suploy-scli'
-rescue LoadError
-  STDERR.puts "In development, you need to use `bundle exec bin/suploy-scli` to run your app"
-  STDERR.puts "At install-time, RubyGems will make sure lib, etc. are in the load path"
-  STDERR.puts "Feel free to remove this message from bin/suploy-scli now"
-  exit 64
-end
 
 include GLI::App
 
-program_desc 'Describe your application here'
+program_desc 'The project aims to provide a consistent and simple to use API to
+access the core suploy functionality. This is important to separate the
+repository and docker management from the web interface and thereby simplifying
+the execution of administrative tasks from the command line.'
 
 version SuployScli::VERSION
 
-desc 'Describe some switch here'
-switch [:s,:switch]
-
-desc 'Describe some flag here'
-default_value 'the default'
-arg_name 'The name of the argument'
-flag [:f,:flagname]
-
-desc 'Describe list here'
-arg_name 'Describe arguments to list here'
-command :list do |c|
-  c.desc 'Describe a switch to list'
-  c.switch :s
-
-  c.desc 'Describe a flag to list'
-  c.default_value 'default'
-  c.flag :f
-  c.action do |global_options,options,args|
-
-    # Your command logic here
-     
-    # If you have any errors, just raise them
-    # raise "that command made no sense"
-
-    puts "list command ran"
+desc 'Handle docker database containers'
+command :database do |c|
+  c.desc 'create a new database container'
+  c.command :create do |create|
+    create.action do |global_options,options,args|
+      puts "Creating a database just for you. Hang on a second..."
+      puts Scli.database_create
+    end
   end
-end
-
-desc 'Describe add here'
-arg_name 'Describe arguments to add here'
-command :add do |c|
-  c.action do |global_options,options,args|
-    puts "add command ran"
-  end
-end
-
-desc 'Describe complete here'
-arg_name 'Describe arguments to complete here'
-command :complete do |c|
-  c.action do |global_options,options,args|
-    puts "complete command ran"
+  c.desc 'show all database containers'
+  c.command :list do |list|
+    list.action do |global_options,options,args|
+      puts "list all containers here"
+    end
   end
 end
 
