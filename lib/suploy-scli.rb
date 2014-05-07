@@ -10,16 +10,14 @@ require 'docker'
 
 require 'suploy-scli/version.rb'
 
-# Add requires for other files you add to your project here, so
-# you just need to require this one file in your bin file
-
 class Scli
-	def initialize()
-		#@keydir = "./"
-		#@conffile = "./gitolite.conf"
-		#@git_repo_url = "./"
-    #@ga_repo = Gitolite::GitoliteAdmin.new("./")
-    #@gitolite_config = ga_repo.config
+	def initialize
+		@stdout = io
+		@keydir = "./"
+		@conffile = "./gitolite.conf"
+		@git_repo_url = "./"
+    @ga_repo = Gitolite::GitoliteAdmin.new("./")
+    @gitolite_config = ga_repo.config
 	end
 
 	def add_ssh_key(user, keyname, key)
@@ -74,7 +72,6 @@ class Scli
 		end
 	end
 
-
 	def view_container(repo) 
     container = Docker::Container.get(repo)
     container.json
@@ -89,5 +86,18 @@ class Scli
   def stop_container(repo)
     container = Docker::Container.get(repo)
     container.stop
+  end
+
+  # Create a postgres database
+  # return the container id, the ip and the ruby database url
+  def self.database_create
+    container = Docker::Container.create('Image' => 'zumbrunnen/postgresql')
+    ret = container.start
+    ip = container.json['NetworkSettings']['IPAddress']
+    {
+      :id => ret.id,
+      :ip => ip,
+      :connectionString => "postgres://docker:docker@#{ip}/docker"
+    }
   end
 end
