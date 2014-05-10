@@ -5,11 +5,11 @@ require 'gitolite'
 require 'docker'
 
 
-require './lib/suploy-scli/lib/suploy-scli/version.rb'
+require 'suploy-scli/version.rb'
 
 class Scli
-  def initialize(gitolite_dir, git_repo_dir)
-    @stdout = Kernel
+  def initialize(gitolite_dir, git_repo_dir, io=Kernel)
+    @stdout = io
     @keydir = "#{gitolite_dir}/keydir"
     @conffile = "#{gitolite_dir}/conf/gitolite.conf"
     @git_repo_dir = git_repo_dir
