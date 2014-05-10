@@ -2,7 +2,7 @@
 Feature: Add a new repository
 
   Scenario Outline: Add a repository for a user who has an ssh key
-		Given I run the script with repo add <user> <repo>
+		When I get repo add <user> <repo> for "suploy-scli"
 		Then the ./gitolite.conf should contain <user> and <repo>
 
   Examples:
