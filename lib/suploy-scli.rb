@@ -2,6 +2,7 @@ require 'fileutils'
 require 'tempfile'
 require 'json'
 require 'gitolite'
+require 'sshkey'
 require 'docker'
 
 
@@ -9,6 +10,7 @@ require 'suploy-scli/version.rb'
 
 class Scli
   def initialize(gitolite_dir, git_repo_dir, io=Kernel)
+    @gitolite_dir = gitolite_dir
     @stdout = io
     @keydir = "#{gitolite_dir}/keydir"
     @conffile = "#{gitolite_dir}/conf/gitolite.conf"
@@ -18,8 +20,12 @@ class Scli
   end
 
   def add_ssh_key(user, keyname, key)
-    File.open("#{@keydir}/#{user}@#{keyname}.pub", 'w') { |file| file.write(key + "\n") }
-    push_git_repo
+    if SSHKey.valid_ssh_public_key? key
+   	File.open("#{@keydir}/#{user}@#{keyname}.pub", 'w') { |file| file.write(key + "\n") }
+   	push_git_repo
+    else 
+	puts "Not a valid ssh key"
+    end 
   end
 
   def remove_ssh_key(user, keyname)
@@ -61,7 +67,7 @@ class Scli
 
   def push_git_repo
     # maybe use grit here?
-    Dir.chdir(@git_repo_dir) do
+    Dir.chdir(@gitolite_dir) do
       system('git add --all')
       system('git commit -m "auto commit"')
       system('git push origin master')
