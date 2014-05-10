@@ -26,6 +26,7 @@ GEM
       multi_json (>= 1.7.5, < 2.0)
       multi_test (>= 0.1.1)
     diff-lcs (1.2.5)
+    docker (0.0.1)
     docker-api (1.10.10)
       archive-tar-minitar
       excon (>= 0.28)
@@ -48,6 +49,7 @@ GEM
       blankslate
     json (1.8.1)
     mime-types (1.25.1)
+    multi_json (1.10.0)
     multi_test (0.1.1)
     posix-spawn (0.3.8)
     rake (10.3.1)
@@ -61,6 +63,8 @@ PLATFORMS
 
 DEPENDENCIES
   aruba
+  docker-api
+  gitolite
   rake
   rdoc
   suploy-scli!
