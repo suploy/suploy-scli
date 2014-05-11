@@ -67,8 +67,8 @@ command :repo do |c|
   c.desc "removes a repository from suploy"
   c.command :rm do |rm| 
     rm.action do |global_options,options,args|
-      if args.size == 2
-         @scli.remove_repository(args[0])
+      if args.size == 1
+         puts @scli.remove_repository(args[0])
       end
     end
   end
@@ -101,6 +101,10 @@ command :container do |c|
   c.desc "Views information about a container"
   c.command :view do |view| 
     view.action do |global_options,options,args|
+      if args.size == 0 
+         ugly_json = @scli.view_all_container()
+         puts JSON::pretty_generate(ugly_json)
+      end
       if args.size == 1
          ugly_json = @scli.view_container(args[0])
          puts JSON::pretty_generate(ugly_json)

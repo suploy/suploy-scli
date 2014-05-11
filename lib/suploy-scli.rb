@@ -46,6 +46,7 @@ class Scli
     repo = @gitolite_config.get_repo(repo_name)
     @gitolite_config.rm_repo(repo)
     @ga_repo.save_and_apply
+    FileUtils.rm_rf ("#{@git_repo_dir}/#{repo_name}.git")
   end
 
   def view_container(repo) 
@@ -61,6 +62,10 @@ class Scli
   def stop_container(repo)
     container = Docker::Container.get(repo)
     container.stop
+  end
+
+  def view_all_container()
+    Docker::Container.all(:all => true)
   end
 
   # Create a postgres database
