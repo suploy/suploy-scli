@@ -102,7 +102,8 @@ command :container do |c|
   c.command :view do |view| 
     view.action do |global_options,options,args|
       if args.size == 1
-         @scli.view_container(args[0])
+         ugly_json = @scli.view_container(args[0])
+         puts JSON::pretty_generate(ugly_json)
       end
     end
   end
