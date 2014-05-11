@@ -22,16 +22,17 @@ class Scli
   def add_ssh_key(user, keyname, key_string)
     if SSHKey.valid_ssh_public_key? key_string
         key = Gitolite::SSHKey.from_string(key_string, user, keyname)
-        key.to_file(@keydir)
-        push_git_repo
+        @ga_repo.add_key(key)
+        @ga_repo.save_and_apply
     else 
 	puts "Not a valid ssh key"
     end 
   end
 
   def remove_ssh_key(user, keyname)
-    File.delete("#{@keydir}/#{user}@#{keyname}.pub")
-    push_git_repo
+    key = Gitolite::SSHKey.from_file("#{@keydir}/#{user}@#{keyname}.pub")
+    @ga_repo.rm_key(key)
+    @ga_repo.save_and_apply
   end
 
   def add_repository(user, repo)
@@ -41,38 +42,10 @@ class Scli
     @ga_repo.save_and_apply
   end
 
-  def remove_repository(repo) 
-    tmp = Tempfile.new("extract")
-
-    # we have to keep deleting lines until there is an empty newline
-    line_deleted = false
-
-    open("#@conffile", 'r').each do |l|
-      if l =~	/^\s*$/ && line_deleted
-        line_deleted = false 
-        next # don't write the empty newline
-      end
-      next if line_deleted
-
-      unless l =~ /^repo\s#{repo}$/
-        tmp << l 
-      else
-        line_deleted = true
-      end
-    end
-
-    tmp.close
-    FileUtils.mv(tmp.path, "#@conffile")
-    push_git_repo
-  end
-
-  def push_git_repo
-    # maybe use grit here?
-    Dir.chdir(@gitolite_dir) do
-      system('git add --all')
-      system('git commit -m "auto commit"')
-      system('git push origin master')
-    end
+  def remove_repository(repo_name) 
+    repo = @gitolite_config.get_repo(repo_name)
+    @gitolite_config.rm_repo(repo)
+    @ga_repo.save_and_apply
   end
 
   def view_container(repo) 
