@@ -19,10 +19,11 @@ class Scli
     @gitolite_config = @ga_repo.config
   end
 
-  def add_ssh_key(user, keyname, key)
-    if SSHKey.valid_ssh_public_key? key
-   	File.open("#{@keydir}/#{user}@#{keyname}.pub", 'w') { |file| file.write(key + "\n") }
-   	push_git_repo
+  def add_ssh_key(user, keyname, key_string)
+    if SSHKey.valid_ssh_public_key? key_string
+        key = Gitolite::SSHKey.from_string(key_string, user, keyname)
+        key.to_file(@keydir)
+        push_git_repo
     else 
 	puts "Not a valid ssh key"
     end 

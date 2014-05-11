@@ -3,13 +3,14 @@ require File.join([File.dirname(__FILE__),'lib','suploy-scli','version.rb'])
 spec = Gem::Specification.new do |s| 
   s.name = 'suploy-scli'
   s.version = SuployScli::VERSION
-  s.author = 'Your Name Here'
-  s.email = 'your@email.address.com'
-  s.homepage = 'http://your.website.com'
+  s.author = ['flower-pot', 'jannishuebl', 'FlopsKa']
+  s.email = ['fbranczyk@gmail.com', 'jannis.huebl@gmail.com', 'flops.ka@gmail.com']
+  s.homepage = 'https://github.com/suploy/suploy-scli'
   s.platform = Gem::Platform::RUBY
-  s.summary = 'A description of your project'
+  s.summary = 'Command line interface and library for managing a suploy backend'
   s.files = `git ls-files`.split("
 ")
+  s.license = "MIT"
   s.require_paths << 'lib'
   s.has_rdoc = true
   s.extra_rdoc_files = ['README.rdoc','suploy-scli.rdoc']
@@ -20,7 +21,7 @@ spec = Gem::Specification.new do |s|
   s.add_development_dependency('rdoc')
   s.add_development_dependency('aruba')
   s.add_runtime_dependency('gli','2.10.0')
-  s.add_runtime_dependency('gitolite')
-  s.add_runtime_dependency('docker')
+  s.add_runtime_dependency('jbox-gitolite')
+  s.add_runtime_dependency('sshkey')
   s.add_runtime_dependency('docker-api')
 end
