@@ -49,6 +49,18 @@ class Scli
     FileUtils.rm_rf ("#{@git_repo_dir}/#{repo_name}.git")
   end
 
+  def add_user_to_repository(repo_name, user) 
+    repo = @gitolite_config.get_repo(repo_name)
+    repo.add_permission("RW+", "", user)
+    @ga_repo.save_and_apply
+  end
+
+  #def remove_user_to_repository(repo_name, user) 
+    #repo = @gitolite_config.get_repo(repo_name)
+    #repo.add_permission("RW+", "", user)
+    #@ga_repo.save_and_apply
+  #end
+
   def view_container(repo) 
     container = Docker::Container.get(repo)
     container.json
