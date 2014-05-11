@@ -68,7 +68,18 @@ command :repo do |c|
   c.command :rm do |rm| 
     rm.action do |global_options,options,args|
       if args.size == 1
-         puts @scli.remove_repository(args[0])
+         @scli.remove_repository(args[0])
+      end
+    end
+  end
+
+  c.desc "manage user of a repository"
+  c.command :user do |user| 
+    user.command :add do |add|
+      add.action do |global_options,options,args|
+        if args.size == 2
+           @scli.add_user_to_repository(args[0], args[1])
+        end
       end
     end
   end

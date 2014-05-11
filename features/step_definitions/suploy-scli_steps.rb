@@ -31,6 +31,11 @@ When /^I get repo add (.*?) (.*?) for "([^"]*)"$/ do |user, repo, app_name|
   @app_name = app_name
   step %(I run `#{app_name} repo add #{user} #{repo} `)
 end
+
+When(/^I get repo user add (.*?) (.*?) for "(.*?)"$/) do |repo, user, app_name|
+  @app_name = app_name
+  step %(I run `#{app_name} repo user add #{repo} #{user} `)
+end
  
 When(/^I run the "(.*?)" with repo rm (.*?)$/) do |app_name, repo| 
   @app_name = app_name
