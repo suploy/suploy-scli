@@ -56,7 +56,6 @@ class Scli
   def start_container(repo)
     container = Docker::Container.get(repo)
     result_json = container.start
-    JSON.parse(result_json)
   end
 
   def stop_container(repo)
