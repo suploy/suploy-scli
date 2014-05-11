@@ -32,14 +32,7 @@ command :ssh do |c|
   arg_name 'Describe arguments to list here'
   c.command :add do |add| 
     add.action do |global_options,options,args|
-      puts("hallo")
-      puts(args[0])
-      puts(args[1])
-      puts(args[2])
       if args.size == 3
-         puts(args[0])
-         puts(args[1])
-         puts(args[2])
          @scli.add_ssh_key(args[0], args[1], args[2])
       end
     end
