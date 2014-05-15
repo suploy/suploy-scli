@@ -82,6 +82,14 @@ command :repo do |c|
         end
       end
     end
+
+    user.command :rm do |rm|
+      rm.action do |global_options,options,args|
+        if args.size == 2
+           @scli.remove_user_from_repository(args[0], args[1])
+        end
+      end
+    end
   end
 
 end
