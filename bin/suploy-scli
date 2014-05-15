@@ -111,6 +111,8 @@ command :repo do |c|
           repo = args[0]
           user = args[1]
           @repo.remove_user_from_repository(repo, user)
+        else 
+          raise_arg_not_match
         end
       end
     end
@@ -121,38 +123,56 @@ end
 desc 'Manage suploy container'
 command :container do |c|
 
-  c.desc ""
+  c.desc "Start a container of a repository"
+  c.arg_name '<repository_name>'
   c.command :start do |start| 
     start.action do |global_options,options,args|
       if args.size == 1
-        @container.start_container(args[0])
+        repo = args[0]
+        @container.start_container(repo)
+      else 
+        raise_arg_not_match
       end
     end
   end
 
 
-  c.desc "stop a running container"
+  c.desc "Stop a running container of a repository"
+  c.arg_name '<repository_name>'
   c.command :stop do |stop| 
     stop.action do |global_options,options,args|
       if args.size == 1
-        @container.stop_container(args[0])
+        repo = args[0]
+        @container.stop_container(repo)
+      else 
+        raise_arg_not_match
       end
     end
   end
 
   c.desc "Views information about a container"
+  c.arg_name '<repository_name>'
   c.command :view do |view| 
-    view.action do |global_options,options,args|
-      if args.size == 0 
-        ugly_json = @container.scli.view_all_container()
-        puts JSON::pretty_generate(ugly_json)
-      end
-      if args.size == 1
-        ugly_json = @container.scli.view_container(args[0])
+
+    view.desc "Views information about all container"
+    view.command :all do |all|
+      all.action do |global_options,options,args|
+        ugly_json = @container.view_all_container()
         puts JSON::pretty_generate(ugly_json)
       end
     end
+    
+    view.action do |global_options,options,args|
+      if args.size == 1
+        repo = args[0]
+        ugly_json = @container.view_container(repo)
+        puts JSON::pretty_generate(ugly_json)
+      else 
+        raise_arg_not_match
+      end
+    end
   end
+
 end
 
 desc 'Handle docker database containers'
