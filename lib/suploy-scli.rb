@@ -6,10 +6,8 @@ require 'sshkey'
 require 'docker'
 
 
-module Suploy_scli
-    require 'suploy-scli/version.rb'
-    require 'scli/ssh_key'
-    require 'scli/container'
-    require 'scli/database'
-    require 'scli/repo'
-end
+require 'suploy-scli/version.rb'
+require_relative 'scli/ssh_key'
+require_relative 'scli/container'
+require_relative 'scli/database'
+require_relative 'scli/repo'

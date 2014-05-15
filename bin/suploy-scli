@@ -33,7 +33,7 @@ command :ssh do |c|
   c.command :add do |add| 
     add.action do |global_options,options,args|
       if args.size == 3
-         @scli.add_ssh_key(args[0], args[1], args[2])
+         @ssh_keys.add_ssh_key(args[0], args[1], args[2])
       end
     end
   end
@@ -43,7 +43,7 @@ command :ssh do |c|
   c.command :rm do |rm| 
     rm.action do |global_options,options,args|
       if args.size == 2
-         @scli.remove_ssh_key(args[0], args[1])
+         @ssh_keys.remove_ssh_key(args[0], args[1])
       end
     end
   end
@@ -59,7 +59,7 @@ command :repo do |c|
   c.command :add do |add| 
     add.action do |global_options,options,args|
       if args.size == 2
-         @scli.add_repository(args[0], args[1])
+         @repo.add_repository(args[0], args[1])
       end
     end
   end
@@ -68,7 +68,7 @@ command :repo do |c|
   c.command :rm do |rm| 
     rm.action do |global_options,options,args|
       if args.size == 1
-         @scli.remove_repository(args[0])
+         @repo.remove_repository(args[0])
       end
     end
   end
@@ -78,7 +78,7 @@ command :repo do |c|
     user.command :add do |add|
       add.action do |global_options,options,args|
         if args.size == 2
-           @scli.add_user_to_repository(args[0], args[1])
+           @repo.add_user_to_repository(args[0], args[1])
         end
       end
     end
@@ -86,7 +86,7 @@ command :repo do |c|
     user.command :rm do |rm|
       rm.action do |global_options,options,args|
         if args.size == 2
-           @scli.remove_user_from_repository(args[0], args[1])
+           @repo.remove_user_from_repository(args[0], args[1])
         end
       end
     end
@@ -102,7 +102,7 @@ command :container do |c|
   c.command :start do |start| 
     start.action do |global_options,options,args|
       if args.size == 1
-         @scli.start_container(args[0])
+         @container.start_container(args[0])
       end
     end
   end
@@ -112,7 +112,7 @@ command :container do |c|
   c.command :stop do |stop| 
     stop.action do |global_options,options,args|
       if args.size == 1
-         @scli.stop_container(args[0])
+         @container.stop_container(args[0])
       end
     end
   end
@@ -121,11 +121,11 @@ command :container do |c|
   c.command :view do |view| 
     view.action do |global_options,options,args|
       if args.size == 0 
-         ugly_json = @scli.view_all_container()
+         ugly_json = @container.scli.view_all_container()
          puts JSON::pretty_generate(ugly_json)
       end
       if args.size == 1
-         ugly_json = @scli.view_container(args[0])
+         ugly_json = @container.scli.view_container(args[0])
          puts JSON::pretty_generate(ugly_json)
       end
     end
@@ -138,7 +138,7 @@ command :database do |c|
   c.command :create do |create|
     create.action do |global_options,options,args|
       puts "Creating a database just for you. Hang on a second..."
-      puts Scli.database_create
+      puts @database.database_create
     end
   end
   c.desc 'show all database containers'
@@ -150,7 +150,12 @@ command :database do |c|
 end
 
 pre do |global,command,options,args|
-  @scli = Scli.new('/home/vagrant/gitolite-admin', '/home/git/repositories')
+  gitolite_dir = '/home/vagrant/gitolite-admin'
+  git_repo_dir = '/home/git/repositories'
+  @ssh_keys = Scli::ScliSSHKey.new(gitolite_dir)
+  @container = Scli::Container.new
+  @repo = Scli::Repo.new(gitolite_dir, git_repo_dir)
+  @database = Scli::Database.new
 
   true
 end
