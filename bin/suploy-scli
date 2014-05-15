@@ -15,78 +15,102 @@ program_desc 'A commandlineinterface for managing a suploy server'
 
 version SuployScli::VERSION
 
-desc 'manage SSH Keys'
+desc 'Manage SSH Keys'
 command :ssh do |c|
-
 
   c.desc "Add a SSH Key to a user"
   c.arg_name '<username> <sshkey_name> <sshkey>'
   c.command :add do |add| 
     add.action do |global_options,options, args|
       if args.size == 3
-         user        = args[0]
-         sshkey_name = args[1]
-         sshkey      = args[2]
-         if @ssh_keys.add_ssh_key(user, sshkey_name, sshkey)
-           puts "SSH-Key #{sshkey_name} added for #{user}"
-         else 
-           STDERR.puts "ERROR: Cannot add SSH-Key"
-         end
+        user        = args[0]
+        sshkey_name = args[1]
+        sshkey      = args[2]
+        if @ssh_keys.add_ssh_key(user, sshkey_name, sshkey)
+          puts "SSH-Key #{sshkey_name} added for #{user}"
+        else 
+          raise_error "Cannot add SSH-Key"
+        end
       else
-         STDERR.puts "ERROR: Wrong number of arguments"
+        raise_arg_not_match
       end
     end
   end
 
 
-  c.desc "removes a ssh-key from a user"
+  c.desc "Remove a SSH Key from a user"
+  c.arg_name '<username> <sshkey_name>'
   c.command :rm do |rm| 
     rm.action do |global_options,options,args|
       if args.size == 2
-         @ssh_keys.remove_ssh_key(args[0], args[1])
+        user        = args[0]
+        sshkey_name = args[1]
+        if @ssh_keys.remove_ssh_key(user, sshkey_name)
+          puts "SSH-Key #{sshkey_name} removed for #{user}"
+        end
+      else 
+        raise_arg_not_match
       end
     end
   end
 
 end
 
-desc 'manage repositoryis'
-arg_name 'Describe arguments to add here'
+desc 'Manage repositories'
 command :repo do |c|
 
 
-  c.desc "adds a repository to suploy"
+  c.desc "Add a repository to suploy"
+  c.arg_name '<username> <repository_name>'
   c.command :add do |add| 
     add.action do |global_options,options,args|
       if args.size == 2
-         @repo.add_repository(args[0], args[1])
+        user = args[0]
+        repo = args[1]
+        @repo.add_repository(user, repo)
+      else 
+        raise_arg_not_match
       end
     end
   end
 
-  c.desc "removes a repository from suploy"
+  c.desc "Remove a repository from suploy"
+  c.arg_name '<username> <repository_name>'
   c.command :rm do |rm| 
     rm.action do |global_options,options,args|
       if args.size == 1
-         @repo.remove_repository(args[0])
+        repo = args[0]
+        @repo.remove_repository(repo)
+      else 
+        raise_arg_not_match
       end
     end
   end
 
-  c.desc "manage user of a repository"
+  c.desc "Manage user of a repository"
   c.command :user do |user| 
+    user.desc "Add a user to a repository"
+    user.arg_name '<repository_name> <username>'
     user.command :add do |add|
       add.action do |global_options,options,args|
         if args.size == 2
-           @repo.add_user_to_repository(args[0], args[1])
+          repo = args[0]
+          user = args[1]
+          @repo.add_user_to_repository(repo, user)
+        else 
+          raise_arg_not_match
         end
       end
     end
 
+    user.desc "Remove a user to a repository"
+    user.arg_name '<repository_name> <username>'
     user.command :rm do |rm|
       rm.action do |global_options,options,args|
         if args.size == 2
-           @repo.remove_user_from_repository(args[0], args[1])
+          repo = args[0]
+          user = args[1]
+          @repo.remove_user_from_repository(repo, user)
         end
       end
     end
@@ -94,25 +118,24 @@ command :repo do |c|
 
 end
 
-desc 'manage suploy container'
-arg_name 'Describe arguments to complete here'
+desc 'Manage suploy container'
 command :container do |c|
 
   c.desc ""
   c.command :start do |start| 
     start.action do |global_options,options,args|
       if args.size == 1
-         @container.start_container(args[0])
+        @container.start_container(args[0])
       end
     end
   end
-  
+
 
   c.desc "stop a running container"
   c.command :stop do |stop| 
     stop.action do |global_options,options,args|
       if args.size == 1
-         @container.stop_container(args[0])
+        @container.stop_container(args[0])
       end
     end
   end
@@ -121,12 +144,12 @@ command :container do |c|
   c.command :view do |view| 
     view.action do |global_options,options,args|
       if args.size == 0 
-         ugly_json = @container.scli.view_all_container()
-         puts JSON::pretty_generate(ugly_json)
+        ugly_json = @container.scli.view_all_container()
+        puts JSON::pretty_generate(ugly_json)
       end
       if args.size == 1
-         ugly_json = @container.scli.view_container(args[0])
-         puts JSON::pretty_generate(ugly_json)
+        ugly_json = @container.scli.view_container(args[0])
+        puts JSON::pretty_generate(ugly_json)
       end
     end
   end
@@ -170,6 +193,14 @@ on_error do |exception|
   # Error logic here
   # return false to skip default error handling
   true
+end
+
+def raise_error (msg) 
+  STDERR.puts "ERROR: #{msg}" 
+end
+
+def raise_arg_not_match
+  raise_error "Wrong number of arguments"
 end
 
 exit run(ARGV)
