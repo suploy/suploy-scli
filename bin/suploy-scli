@@ -15,25 +15,25 @@ program_desc 'A commandlineinterface for managing a suploy server'
 
 version SuployScli::VERSION
 
-desc 'Describe some switch here'
-switch [:s,:switch]
-
-desc 'Describe some flag here'
-default_value 'the default'
-arg_name 'The name of the argument'
-flag [:f,:flagname]
-
-desc 'manage ssh-keys'
-arg_name 'Describe arguments to list here'
+desc 'manage SSH Keys'
 command :ssh do |c|
 
 
-  c.desc "adds a ssh-key to a user"
-  arg_name 'Describe arguments to list here'
+  c.desc "Add a SSH Key to a user"
+  c.arg_name '<username> <sshkey_name> <sshkey>'
   c.command :add do |add| 
-    add.action do |global_options,options,args|
+    add.action do |global_options,options, args|
       if args.size == 3
-         @ssh_keys.add_ssh_key(args[0], args[1], args[2])
+         user        = args[0]
+         sshkey_name = args[1]
+         sshkey      = args[2]
+         if @ssh_keys.add_ssh_key(user, sshkey_name, sshkey)
+           puts "SSH-Key #{sshkey_name} added for #{user}"
+         else 
+           STDERR.puts "ERROR: Cannot add SSH-Key"
+         end
+      else
+         STDERR.puts "ERROR: Wrong number of arguments"
       end
     end
   end
