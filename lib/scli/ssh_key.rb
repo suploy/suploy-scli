@@ -13,10 +13,10 @@ module Scli
         key = Gitolite::SSHKey.from_string(key_string, user, keyname)
         @ga_repo.add_key(key)
         @ga_repo.save_and_apply
-        return True
+        return true
       else 
         STDERR.puts "ERROR: Not a valid SSH Key"
-        return False
+        return false
       end 
     end
 
