@@ -123,6 +123,35 @@ end
 desc 'Manage suploy container'
 command :container do |c|
 
+  c.desc "Create a container from an image"
+  c.arg_name '<image_name>'
+  c.command :create do |create| 
+    create.action do |global_options,options,args|
+      if args.size == 1
+        image = args[0]
+        @container.create_app_container(image, "")
+      else 
+        raise_arg_not_match
+      end
+    end
+  end
+
+
+  c.desc "Create a container from an image with a database"
+  c.arg_name '<image_name> <db_container_name>'
+  c.command :link do |link| 
+    link.action do |global_options,options,args|
+      if args.size == 2
+        image = args[0]
+				link = args[1]
+        @container.create_app_container_with_db(image, "", link)
+      else 
+        raise_arg_not_match
+      end
+    end
+  end
+
+
   c.desc "Start a container of a repository"
   c.arg_name '<repository_name>'
   c.command :start do |start| 
@@ -195,9 +224,9 @@ end
 pre do |global,command,options,args|
   gitolite_dir = '/home/vagrant/gitolite-admin'
   git_repo_dir = '/home/git/repositories'
-  @ssh_keys = Scli::ScliSSHKey.new(gitolite_dir)
+  #@ssh_keys = Scli::ScliSSHKey.new(gitolite_dir)
   @container = Scli::Container.new
-  @repo = Scli::Repo.new(gitolite_dir, git_repo_dir)
+  #@repo = Scli::Repo.new(gitolite_dir, git_repo_dir)
   @database = Scli::Database.new
 
   true
