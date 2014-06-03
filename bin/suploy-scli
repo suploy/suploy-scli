@@ -129,7 +129,7 @@ command :container do |c|
     create.action do |global_options,options,args|
       if args.size == 1
         image = args[0]
-        @container.create_app_container(image, "")
+        Scli::Container.create_app_container(image, '')
       else 
         raise_arg_not_match
       end
@@ -144,7 +144,7 @@ command :container do |c|
       if args.size == 2
         image = args[0]
 				link = args[1]
-        @container.create_app_container_with_db(image, "", link)
+        Scli::Container.create_app_container_with_db(image, "", link)
       else 
         raise_arg_not_match
       end
@@ -158,7 +158,7 @@ command :container do |c|
     start.action do |global_options,options,args|
       if args.size == 1
         repo = args[0]
-        @container.start_container(repo)
+        Scli::Container.start_container(repo)
       else 
         raise_arg_not_match
       end
@@ -172,7 +172,7 @@ command :container do |c|
     stop.action do |global_options,options,args|
       if args.size == 1
         repo = args[0]
-        @container.stop_container(repo)
+        Scli::Container.stop_container(repo)
       else 
         raise_arg_not_match
       end
@@ -210,7 +210,7 @@ command :database do |c|
   c.command :create do |create|
     create.action do |global_options,options,args|
       puts "Creating a database just for you. Hang on a second..."
-      puts @database.database_create
+      puts Scli::Database.database_create
     end
   end
   c.desc 'show all database containers'
@@ -225,7 +225,6 @@ pre do |global,command,options,args|
   gitolite_dir = '/home/vagrant/gitolite-admin'
   git_repo_dir = '/home/git/repositories'
   #@ssh_keys = Scli::ScliSSHKey.new(gitolite_dir)
-  @container = Scli::Container.new
   #@repo = Scli::Repo.new(gitolite_dir, git_repo_dir)
   @database = Scli::Database.new
 

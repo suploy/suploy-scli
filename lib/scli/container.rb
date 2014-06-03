@@ -1,19 +1,35 @@
 module Scli
   class Container
 
-    def view_container(repo) 
-      container = Docker::Container.get(repo)
+    def self.view_container(id_or_name) 
+      container = Docker::Container.get(id_or_name)
       container.json
     end
 
-    def start_container(repo)
+    def self.start_container(repo)
       container = Docker::Container.get(repo)
       result_json = container.start
     end
 
+		# Get the container name from the id
+		def self.get_name_from_id(container_id)
+			container = Docker::Container.get(container_id)
+		end
+
+		# Creates a new docker container from an image
+		def self.create_app_container(image_name, environment)
+			container = Docker::Container.create('Cmd' => ['/bin/bash', '-c', '/start web'],
+															 'Image' => image_name,
+															 'Env' => 'PORT=5000',
+															 'ExposedPorts' => {
+																 "5000/tcp" => {}
+															 })
+			container.start
+		end
+
 		# Creates a new docker container from the image which is connected to the
 		# container 'db_container_name'. Use this for database access
-		def create_app_container_with_db(image_name, environment, db_container_name)
+		def self.create_app_container_with_db(image_name, environment, db_container_name)
 			container = Docker::Container.create('Cmd' => ['/bin/bash', '-c', '/start web'],
 															 'Image' => image_name,
 															 'Env' => 'PORT=5000',
@@ -24,12 +40,12 @@ module Scli
 			container.start(params);
 		end
 
-    def stop_container(repo)
+    def self.stop_container(repo)
       container = Docker::Container.get(repo)
       container.stop
     end
 
-    def view_all_container()
+    def self.view_all_container()
       Docker::Container.all(:all => true)
     end
 
